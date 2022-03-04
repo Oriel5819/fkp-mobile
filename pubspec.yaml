@@ -39,6 +39,10 @@ dependencies:
   email_validator: ^2.0.1
   dio: ^4.0.4
   shared_preferences: ^2.0.13
+  bloc: ^8.0.3
+  flutter_bloc: ^8.0.1
+  equatable: ^2.0.3
+  connectivity_plus: ^2.2.1
 
 dev_dependencies:
   flutter_test:
