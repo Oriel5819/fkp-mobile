@@ -12,7 +12,7 @@ class User {
   User({
     required this.id,
     required this.firstName,
-    required this.middleName,
+    this.middleName,
     required this.lastName,
     required this.email,
     required this.isAdmin,
@@ -21,7 +21,7 @@ class User {
 
   String id;
   String firstName;
-  String middleName;
+  String? middleName;
   String lastName;
   String email;
   bool isAdmin;
@@ -30,7 +30,7 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) => User(
         id: json["_id"],
         firstName: json["firstName"],
-        middleName: json["middleName"],
+        middleName: json["middleName"] ?? null,
         lastName: json["lastName"],
         email: json["email"],
         isAdmin: json["isAdmin"],

@@ -5,6 +5,7 @@ import 'package:fkpmobile/api/api.dart';
 import 'package:fkpmobile/models/error.dart';
 import 'package:fkpmobile/models/user.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticationService {
   static final AuthenticationService _shared =
@@ -15,11 +16,22 @@ class AuthenticationService {
 
   ApiURL api = ApiURL();
 
-  Future<void> register(String name, String email, String password,
-      String confirmPassword) async {
-    // ignore: avoid_print
-    await Future.delayed(
-        const Duration(seconds: 2), showRegisteredUser(name, email, password));
+  Future<http.Response> register(String fname, String lname, String email,
+      String password, String confirmPassword) async {
+    http.Response registered = await http.post(
+        Uri.parse(api.HEROKU_URI + "users/register"),
+        headers: <String, String>{
+          "Content-type": "application/json",
+          "Accept": "application/json",
+          "charset": "utf-8"
+        },
+        body: json.encode({
+          "firstName": fname,
+          "lastName": lname,
+          "email": email,
+          "password": password
+        }));
+    return registered;
   }
 
   Future<http.Response> logIn(String email, String password) async {
@@ -31,24 +43,41 @@ class AuthenticationService {
               "charset": "utf-8"
             },
             body: json.encode({"email": email, "password": password}));
-
     return response;
-    // if (response.statusCode != 200) {
-    //   print(JSONResponse);
-    // }
-
-    // final user = loginFromJson(response.body);
-    // if
-    // return user;
   }
 
-  Future<void> logOut() async {
-    await Future.delayed(const Duration(seconds: 2));
+  Future<http.Response> exist(String email) async {
+    http.Response exist =
+        await http.post(Uri.parse(api.HEROKU_URI + 'users/exist'),
+            headers: <String, String>{
+              "Content-type": "application/json",
+              "Accept": "application/json",
+              "charset": "utf-8"
+            },
+            body: json.encode({"email": email}));
+    return exist;
   }
 
-  showRegisteredUser(String name, String email, String password) {
-    print(name);
-    print(email);
-    print(password);
+  Future<http.Response> getUser(String id, String token) async {
+    http.Response response = await http.get(
+      Uri.parse(api.HEROKU_URI + 'users/' + id),
+      headers: <String, String>{
+        "Authorization": "Bearer $token",
+        "Content-type": "application/json",
+        "Accept": "application/json",
+        "charset": "utf-8"
+      },
+    );
+    return response;
+  }
+
+  Future<void> logOut(SharedPreferences localStorage) async {
+    /* sending delete request to the api */
+    print("Sending delete request to the API...");
+    /* sending delete request to the api */
+
+    // removing the localhost in the mobile app
+    await localStorage.remove("userID");
+    await localStorage.remove("userToken");
   }
 }
